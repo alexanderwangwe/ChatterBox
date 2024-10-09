@@ -1,6 +1,7 @@
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
+const axios = require('axios');
 const dotenv = require('dotenv');
 
 
@@ -20,12 +21,24 @@ app.get('/', (req, res) => {
     res.send('Server is running');
 });
 
+// Call python NLP API to detect entities
+
+async function detectEntities(text) {
+    try {
+    const response = await axios.post('http://localhost:5000/detect-entities', {text});
+    return response.data.entities;
+    } catch (error) {
+    console.error('Error calling the NLP service: ', error);
+    return [];
+    }
+}
+
 io.on('connection', (socket) => {
     console.log('New client connected');
 
     socket.on("send_message", async (data) => {
-
         const messsage = data.message;
+        
         const entities = await detectEntities(messsage);
         const tones = await analyzeTone(messsage);
 
