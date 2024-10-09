@@ -1,13 +1,28 @@
-# Node modules
-/client/node_modules
-/server/node_modules
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Python
+venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.env
+.env
+*.env.*
+
+# macOS
+.DS_Store
 
 # Logs
 *.log
 
-# Build directories
-/client/build
-/server/build
-
-# Environment variables
+# Environment Variables
 .env
+
+# Build directories
+client/build/
+server/build/
