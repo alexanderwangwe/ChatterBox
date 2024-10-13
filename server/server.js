@@ -23,7 +23,7 @@ app.get('/', (req, res) => {
 // Call Python NLP API to detect entities
 async function detectEntities(text) {
     try {
-        const response = await axios.post('http://localhost:5000/detect-entities', { text });
+        const response = await axios.post('http://localhost:5000/detect_entities', { text });
         return response.data.entities;
     } catch (error) {
         console.error('Error calling the NLP service: ', error);
