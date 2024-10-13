@@ -4,8 +4,7 @@ const socketIo = require('socket.io');
 const axios = require('axios');
 const dotenv = require('dotenv');
 
-
-//load environment variables
+// Load environment variables
 dotenv.config();
 
 const app = express();
@@ -21,15 +20,26 @@ app.get('/', (req, res) => {
     res.send('Server is running');
 });
 
-// Call python NLP API to detect entities
-
+// Call Python NLP API to detect entities
 async function detectEntities(text) {
     try {
-    const response = await axios.post('http://localhost:5000/detect-entities', {text});
-    return response.data.entities;
+        const response = await axios.post('http://localhost:5000/detect-entities', { text });
+        return response.data.entities;
     } catch (error) {
-    console.error('Error calling the NLP service: ', error);
-    return [];
+        console.error('Error calling the NLP service: ', error);
+        return [];
+    }
+}
+
+// Placeholder function for tone analysis (you'll need to implement or call a service)
+async function analyzeTone(text) {
+    // Assuming you have an external API or a function that handles tone analysis
+    try {
+        const response = await axios.post('http://localhost:5000/analyze-tone', { text });
+        return response.data.tones;
+    } catch (error) {
+        console.error('Error calling the tone analysis service: ', error);
+        return [];
     }
 }
 
@@ -37,15 +47,17 @@ io.on('connection', (socket) => {
     console.log('New client connected');
 
     socket.on("send_message", async (data) => {
-        const messsage = data.message;
-        
-        const entities = await detectEntities(messsage);
-        const tones = await analyzeTone(messsage);
+        const message = data.message;  // Fixed typo from 'messsage' to 'message'
 
+        // Detect entities and analyze tone
+        const entities = await detectEntities(message);
+       // const tones = await analyzeTone(message);(missing tone analyzer service)
+
+        // Emit the result back to the client
         io.emit("receive_message", {
             message: message,
             entities: entities,
-            tones: tones
+           // tones: tones
         });
     });
 
@@ -54,6 +66,7 @@ io.on('connection', (socket) => {
     });
 });
 
+// Start the server
 const PORT = process.env.PORT || 4000;
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
